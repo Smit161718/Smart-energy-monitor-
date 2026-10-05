@@ -1,0 +1,164 @@
+.navbar {
+  height: 64px;
+  margin: 16px 16px 0 292px; /* Margins to sit cleanly next to the fixed sidebar */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 90;
+  transition: margin-left 0.3s ease;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.navbar-title {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.25px;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Status Indicators */
+.status-indicators {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-right: 1px solid var(--border-glass);
+  padding-right: 24px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.status-icon {
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.status-label {
+  font-weight: 500;
+}
+
+/* Live Clock */
+.live-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  border-right: 1px solid var(--border-glass);
+  padding-right: 24px;
+}
+
+.clock-date {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.clock-time {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  font-family: monospace;
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+  color: var(--text-primary);
+}
+
+/* Notification bell */
+.nav-notification {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.notif-bell {
+  font-size: 22px;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+
+.notif-bell:hover {
+  color: var(--text-primary);
+}
+
+.notif-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--color-offline);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--color-offline-glow);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 1024px) {
+  .status-label {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    margin: 16px 16px 0 16px; /* Centered on mobile */
+    padding: 0 16px;
+  }
+  
+  .mobile-menu-btn {
+    display: block;
+  }
+  
+  .live-clock {
+    display: none; /* Hide clock on small screens to save space */
+  }
+
+  .status-indicators {
+    border-right: none;
+    padding-right: 0;
+    gap: 12px;
+  }
+}

@@ -1,0 +1,133 @@
+.reports-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+}
+
+.reports-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+}
+
+.reports-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  gap: 16px;
+  color: var(--text-secondary);
+}
+
+.reports-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.report-card {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.report-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(79, 172, 254, 0.15);
+  color: #4facfe;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(79, 172, 254, 0.2);
+  letter-spacing: 0.5px;
+}
+
+.report-card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-glass);
+  padding-bottom: 12px;
+  max-width: calc(100% - 80px);
+}
+
+.report-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px dashed rgba(255,255,255,0.03);
+}
+
+[data-theme='light'] .stat-item {
+  border-bottom: 1px dashed rgba(0,0,0,0.03);
+}
+
+.stat-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.stat-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.download-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-download {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--border-glass);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  transition: all 0.2s;
+  background: rgba(255,255,255,0.02);
+  color: var(--text-primary);
+}
+
+.btn-download:hover {
+  border-color: var(--border-glass-focus);
+}
+
+.btn-download.csv:hover {
+  background: rgba(0, 245, 160, 0.1);
+  color: var(--color-online);
+  border-color: rgba(0, 245, 160, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 245, 160, 0.1);
+}
+
+.btn-download.pdf:hover {
+  background: rgba(255, 71, 126, 0.1);
+  color: var(--color-offline);
+  border-color: rgba(255, 71, 126, 0.2);
+  box-shadow: 0 4px 15px rgba(255, 71, 126, 0.1);
+}
