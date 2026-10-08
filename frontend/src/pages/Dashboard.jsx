@@ -184,7 +184,6 @@ export default function Dashboard() {
         <MetricCard label="Voltage"       value={fmt(latest?.voltage)}      unit="V"    icon={Zap}         color="blue"   loading={loading} footer={<><Clock size={11} /> Grid voltage</>} />
         <MetricCard label="Energy"        value={fmt(latest?.energy, 3)}    unit="kWh"  icon={Battery}     color="cyan"   loading={loading} footer={<><Clock size={11} /> Cumulative</>} />
         <MetricCard label="Frequency"     value={fmt(latest?.frequency)}    unit="Hz"   icon={Gauge}       color="purple" loading={loading} footer={<><Clock size={11} /> AC frequency</>} />
-        <MetricCard label="Power Factor"  value={fmt(latest?.power_factor, 3)} unit=""  icon={TrendingUp}  color="green"  loading={loading} footer={<><Clock size={11} /> Efficiency</>} />
         <MetricCard label="Today's Bill"  value={`₹${fmt(bill?.todayBill)}`} unit=""   icon={IndianRupee} color="orange" loading={loading} footer={`${fmt(bill?.todayEnergy, 3)} kWh used`} />
         <MetricCard label="Monthly Bill"  value={`₹${fmt(bill?.monthBill)}`} unit=""   icon={IndianRupee} color="red"    loading={loading} footer={`Predicted: ₹${fmt(bill?.predictedBill)}`} />
       </div>
