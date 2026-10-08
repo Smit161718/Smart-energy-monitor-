@@ -27,8 +27,8 @@
 // ── Configuration ─────────────────────────────────────────────
 const char* WIFI_SSID     = "OnePlus Nord CE 2 Lite 5G";        // 🔧 Change this
 const char* WIFI_PASSWORD = "@d1tya0091";    // 🔧 Change this
-const char* PUBLIC_URL    = "http://powermeter-smit.loca.lt"; // 📌 Permanent fixed domain URL
-const char* SERVER_IP     = "192.168.0.110";        // 🔧 Local fallback IP
+const char* PUBLIC_URL    = "https://smart-energy-monitor-3x4t.onrender.com"; // 🌟 Permanent Cloud Link
+const char* SERVER_IP     = "10.182.191.82";        // 🔧 Local fallback IP
 const int   SERVER_PORT   = 5000;
 const char* DEVICE_API_KEY = "none";
 
