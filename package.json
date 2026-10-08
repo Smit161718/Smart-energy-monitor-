@@ -1,0 +1,13 @@
+{
+  "name": "smart-energy-monitor-app",
+  "version": "1.0.0",
+  "description": "IoT-Based Smart Energy Monitoring and Live Bill Estimation System",
+  "scripts": {
+    "install:all": "npm --prefix backend install && npm --prefix frontend install",
+    "build": "npm --prefix frontend install && npm --prefix frontend run build && npm --prefix backend install",
+    "start": "node backend/src/app.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
