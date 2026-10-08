@@ -1,0 +1,18 @@
+{
+  "short_name": "PowerMeter",
+  "name": "PowerMeter - Smart Energy Monitor",
+  "description": "IoT-Based Smart Energy Monitoring and Live Bill Estimation System",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#050B18",
+  "theme_color": "#050B18",
+  "display": "standalone",
+  "orientation": "portrait"
+}
