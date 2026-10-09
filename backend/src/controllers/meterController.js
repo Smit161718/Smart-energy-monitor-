@@ -32,9 +32,12 @@ const checkAndNotify = async (reading, userId = 1) => {
   }
 };
 
+let lastDevicePingTime = 0;
+
 // ── POST /api/meter  (called by ESP32) ──────────────────────────────────────
 exports.postReading = async (req, res) => {
   try {
+    lastDevicePingTime = Date.now();
     const { voltage, current, power, energy, frequency, powerFactor } = req.body;
 
     // Validate required fields
@@ -84,17 +87,22 @@ exports.postReading = async (req, res) => {
 exports.getLatest = async (req, res) => {
   try {
     const [rows] = await pool.query(
-      `SELECT * FROM meter_readings ORDER BY created_at DESC LIMIT 1`
+      `SELECT *, TIMESTAMPDIFF(SECOND, created_at, NOW()) AS age_seconds FROM meter_readings ORDER BY created_at DESC LIMIT 1`
     );
 
     if (rows.length === 0) {
       return res.json({ success: true, data: null, message: 'No readings yet' });
     }
 
-    // Determine device status
+    // Determine device status robustly across timezones
     const reading = rows[0];
-    const ageMs = Date.now() - new Date(reading.created_at).getTime();
-    const isOnline = ageMs < 30000; // Online if reading < 30s ago
+    const memoryAgeMs = lastDevicePingTime > 0 ? (Date.now() - lastDevicePingTime) : Infinity;
+    const dbAgeSec    = (reading.age_seconds !== null && reading.age_seconds !== undefined) 
+      ? Math.abs(reading.age_seconds) 
+      : Infinity;
+    const rawAgeMs    = Math.abs(Date.now() - new Date(reading.created_at).getTime());
+
+    const isOnline   = (memoryAgeMs < 45000) || (dbAgeSec < 45) || (rawAgeMs < 45000);
     const isPowerCut = parseFloat(reading.voltage) === 0 && parseFloat(reading.power) === 0;
 
     res.json({
