@@ -91,7 +91,21 @@ exports.getLatest = async (req, res) => {
     );
 
     if (rows.length === 0) {
-      return res.json({ success: true, data: null, message: 'No readings yet' });
+      return res.json({
+        success: true,
+        data: {
+          voltage: 0,
+          current_amp: 0,
+          power: 0,
+          energy: 0,
+          frequency: 0,
+          power_factor: 0,
+          bill: 0,
+          deviceStatus: 'offline',
+          lastUpdated: null,
+        },
+        message: 'No readings yet'
+      });
     }
 
     // Determine device status robustly across timezones
@@ -116,6 +130,18 @@ exports.getLatest = async (req, res) => {
   } catch (err) {
     console.error('Get latest error:', err);
     res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+// ── POST /api/meter/reset (Clear all readings to start fresh from zero) ──────
+exports.resetReadings = async (req, res) => {
+  try {
+    lastDevicePingTime = 0;
+    await pool.query('DELETE FROM meter_readings');
+    res.json({ success: true, message: 'All meter readings cleared. Dashboard is now at zero.' });
+  } catch (err) {
+    console.error('Reset readings error:', err);
+    res.status(500).json({ success: false, message: 'Server error resetting readings' });
   }
 };
 

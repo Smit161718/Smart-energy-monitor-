@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Zap, Activity, Radio, Battery, Gauge, Clock, IndianRupee,
-  TrendingUp, Wifi, WifiOff, AlertTriangle, RefreshCw
+  TrendingUp, Wifi, WifiOff, AlertTriangle, RefreshCw, RotateCcw
 } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -70,8 +70,22 @@ export default function Dashboard() {
   const [loading,    setLoading]    = useState(true);
   const [lastUpdate, setLastUpdate] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [resetting,  setResetting]  = useState(false);
   const [backendUp,  setBackendUp]  = useState(true);  // tracks if server is reachable
   const intervalRef = useRef(null);
+
+  const handleReset = async () => {
+    if (!window.confirm('Reset all readings to zero? This will start fresh from 0.')) return;
+    setResetting(true);
+    try {
+      await api.post('/meter/reset');
+      await fetchLatest(false);
+    } catch (err) {
+      console.error('Reset error:', err);
+    } finally {
+      setResetting(false);
+    }
+  };
 
   const fetchLatest = useCallback(async (silent = false) => {
     if (!silent) setRefreshing(true);
@@ -131,7 +145,7 @@ export default function Dashboard() {
   const { setDeviceStatus } = useDevice();
   useEffect(() => { setDeviceStatus(deviceStatus); }, [deviceStatus, setDeviceStatus]);
 
-  const fmt = (v, d = 2) => (v !== undefined && v !== null ? parseFloat(v).toFixed(d) : '—');
+  const fmt = (v, d = 2) => (v !== undefined && v !== null && !isNaN(v) ? parseFloat(v).toFixed(d) : '0.00');
 
   return (
     <div>
@@ -167,6 +181,17 @@ export default function Dashboard() {
           >
             <RefreshCw size={14} className={refreshing ? 'spin' : ''} style={{ animation: refreshing ? 'spin 0.5s linear infinite' : 'none' }} />
             Refresh
+          </button>
+          <button
+            id="manual-reset-btn"
+            className="btn btn-outline btn-sm"
+            onClick={handleReset}
+            disabled={resetting}
+            style={{ color: '#EF4444', borderColor: 'rgba(239,68,68,0.3)' }}
+            title="Reset all readings to 0"
+          >
+            <RotateCcw size={14} className={resetting ? 'spin' : ''} />
+            Reset to 0
           </button>
         </div>
       </div>

@@ -6,6 +6,8 @@ const { authenticateToken, authenticateDevice } = require('../middleware/auth');
 
 // ESP32 posts data here — protected by device API key
 router.post('/',           authenticateDevice, meterController.postReading);
+router.post('/reset',      meterController.resetReadings);
+router.delete('/reset',    meterController.resetReadings);
 
 // Frontend reads — protected by user JWT
 router.get('/latest',      authenticateToken,  meterController.getLatest);
