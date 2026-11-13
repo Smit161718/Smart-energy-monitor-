@@ -8,13 +8,10 @@ import autoTable from 'jspdf-autotable';
 import api from '../api';
 
 const columns = [
-  { key: 'created_at',  label: 'Date & Time',   sortable: true },
+  { key: 'created_at',  label: 'Date & Time',    sortable: true },
   { key: 'voltage',     label: 'Voltage (V)',    sortable: true },
-  { key: 'current_amp', label: 'Current (A)',    sortable: true },
-  { key: 'power',       label: 'Power (W)',      sortable: true },
   { key: 'energy',      label: 'Energy (kWh)',   sortable: true },
   { key: 'frequency',   label: 'Frequency (Hz)', sortable: true },
-  { key: 'power_factor',label: 'Power Factor',   sortable: true },
   { key: 'bill',        label: 'Bill (₹)',       sortable: true },
 ];
 
@@ -72,10 +69,10 @@ export default function History() {
     try {
       const { data: res } = await api.get('/meter/history?page=1&limit=10000');
       const rows = res.data;
-      const headers = ['Date', 'Time', 'Voltage(V)', 'Current(A)', 'Power(W)', 'Energy(kWh)', 'Frequency(Hz)', 'PowerFactor', 'Bill(Rs)'];
+      const headers = ['Date', 'Time', 'Voltage(V)', 'Energy(kWh)', 'Frequency(Hz)', 'Bill(Rs)'];
       const csvRows = rows.map(r => {
         const { date, time } = formatDate(r.created_at);
-        return [date, time, fmt(r.voltage), fmt(r.current_amp, 4), fmt(r.power), fmt(r.energy, 4), fmt(r.frequency), fmt(r.power_factor, 4), fmt(r.bill, 4)].join(',');
+        return [date, time, fmt(r.voltage), fmt(r.energy, 4), fmt(r.frequency), fmt(r.bill, 4)].join(',');
       });
       const csvContent = [headers.join(','), ...csvRows].join('\n');
       const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -101,10 +98,10 @@ export default function History() {
       doc.text(`Generated: ${new Date().toLocaleString('en-IN')}`, 14, 23);
       autoTable(doc, {
         startY: 28,
-        head: [['Date', 'Time', 'Voltage(V)', 'Current(A)', 'Power(W)', 'Energy(kWh)', 'Freq(Hz)', 'PF', 'Bill(₹)']],
+        head: [['Date', 'Time', 'Voltage(V)', 'Energy(kWh)', 'Freq(Hz)', 'Bill(₹)']],
         body: rows.map(r => {
           const { date, time } = formatDate(r.created_at);
-          return [date, time, fmt(r.voltage), fmt(r.current_amp, 4), fmt(r.power), fmt(r.energy, 4), fmt(r.frequency), fmt(r.power_factor, 4), fmt(r.bill, 4)];
+          return [date, time, fmt(r.voltage), fmt(r.energy, 4), fmt(r.frequency), fmt(r.bill, 4)];
         }),
         styles: { fontSize: 8, cellPadding: 3 },
         headStyles: { fillColor: [37, 99, 235] },
@@ -176,14 +173,14 @@ export default function History() {
               {loading ? (
                 Array.from({ length: 8 }).map((_, i) => (
                   <tr key={i}>
-                    {Array.from({ length: 9 }).map((_, j) => (
+                    {Array.from({ length: 6 }).map((_, j) => (
                       <td key={j}><div className="skeleton" style={{ height: 16, width: j === 0 ? 30 : 70, borderRadius: 4 }} /></td>
                     ))}
                   </tr>
                 ))
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan={9} style={{ textAlign: 'center', padding: 48, color: 'var(--text-muted)' }}>
+                  <td colSpan={6} style={{ textAlign: 'center', padding: 48, color: 'var(--text-muted)' }}>
                     No readings found. Make sure your ESP32 is connected and posting data.
                   </td>
                 </tr>
@@ -198,19 +195,8 @@ export default function History() {
                       <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{time}</div>
                     </td>
                     <td><span className="badge badge-blue">{fmt(row.voltage)} V</span></td>
-                    <td>{fmt(row.current_amp, 4)} A</td>
-                    <td>
-                      <span className={`badge ${parseFloat(row.power) > 2000 ? 'badge-danger' : parseFloat(row.power) > 1000 ? 'badge-warning' : 'badge-success'}`}>
-                        {fmt(row.power, 0)} W
-                      </span>
-                    </td>
                     <td>{fmt(row.energy, 4)} kWh</td>
                     <td>{fmt(row.frequency)} Hz</td>
-                    <td>
-                      <span className={`badge ${parseFloat(row.power_factor) >= 0.9 ? 'badge-success' : parseFloat(row.power_factor) >= 0.7 ? 'badge-warning' : 'badge-danger'}`}>
-                        {fmt(row.power_factor, 4)}
-                      </span>
-                    </td>
                     <td style={{ fontWeight: 600 }}>₹{fmt(row.bill, 4)}</td>
                   </tr>
                 );
