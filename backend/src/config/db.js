@@ -6,9 +6,23 @@ require('dotenv').config();
 
 const isRemoteHost = process.env.DB_HOST && process.env.DB_HOST !== 'localhost' && process.env.DB_HOST !== '127.0.0.1';
 
-const pool = process.env.DATABASE_URL
+let dbUri = process.env.DATABASE_URL ? process.env.DATABASE_URL.trim() : null;
+if (dbUri) {
+  try {
+    const parsed = new URL(dbUri);
+    if (!parsed.pathname || parsed.pathname === '/' || parsed.pathname === '') {
+      parsed.pathname = '/test'; // Default TiDB database
+      dbUri = parsed.toString();
+    }
+  } catch (err) {
+    // If URL parsing fails, continue with original
+  }
+}
+
+const pool = dbUri
   ? mysql.createPool({
-      uri: process.env.DATABASE_URL,
+      uri: dbUri,
+      database: 'test',
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
@@ -33,6 +47,15 @@ const pool = process.env.DATABASE_URL
   try {
     const conn = await pool.getConnection();
     console.log('✅ MySQL connected successfully');
+
+    try {
+      const [dbRow] = await conn.query('SELECT DATABASE() AS cur_db');
+      if (!dbRow[0]?.cur_db) {
+        await conn.query('USE test');
+      }
+    } catch (e) {
+      // Ignore if database is already in use
+    }
 
     await conn.query(`
       CREATE TABLE IF NOT EXISTS users (
@@ -102,6 +125,21 @@ const pool = process.env.DATABASE_URL
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       )
     `);
+
+    // Seed initial users if table is empty
+    const [userCount] = await conn.query('SELECT COUNT(*) AS count FROM users');
+    if (userCount[0]?.count === 0) {
+      await conn.query(`
+        INSERT INTO users (id, name, email, password, role) VALUES
+        (1, 'Admin', 'admin@energymonitor.com', '$2b$10$rOzJqQ0nW1kZpR6nX7vGHOQ8mFkLbN9QwYkHvLmZKpQ2xYjOeW6Na', 'user'),
+        (2, 'kunal', 'itkunalghanekar@gmail.com', '$2a$10$Q10fHYIsVW9UueihvtDwH.Y.KzcgZAjW2dgM8JHTKcN/92MKKORFm', 'user'),
+        (3, 'Smit Bhusane', 'smitbhusane@gmail.com', '$2a$10$JiOT2GE9wvzxiw5gKacYcuFnjO.l0qBtYEE2YGIz9vBTlcO6ldEiW', 'user')
+      `);
+      await conn.query(`
+        INSERT INTO settings (user_id, tariff) VALUES (1, 8.00), (2, 8.00), (3, 8.00)
+      `);
+      console.log('✅ Default users seeded successfully');
+    }
 
     conn.release();
     console.log('✅ Database tables verified/initialized successfully');
